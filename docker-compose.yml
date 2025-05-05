@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql      # Persist database data
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 15s
+      start_interval: 3s
+      interval: 1m
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped  # Auto-restart on failure
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: unless-stopped  # Auto-restart on failure
+
+volumes:
+  db:

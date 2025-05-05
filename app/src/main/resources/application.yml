@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: OrderBook
+  datasource:
+    url: jdbc:mariadb://db:3306/db
+    username: user
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: update
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

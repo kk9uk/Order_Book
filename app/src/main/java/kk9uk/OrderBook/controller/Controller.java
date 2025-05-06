@@ -1,6 +1,7 @@
 package kk9uk.OrderBook.controller;
 
 import kk9uk.OrderBook.dto.PlaceRequestDto;
+import kk9uk.OrderBook.dto.TakeOrderDto;
 import kk9uk.OrderBook.po.OrderPo;
 import kk9uk.OrderBook.repository.OrderRepository;
 import kk9uk.OrderBook.service.PlaceOrderService;
@@ -38,6 +39,21 @@ public class Controller {
         }
 
         return placeOrderService.placeOrder(startLat, startLong, endLat, endLong);
+
+    }
+
+    @PatchMapping("/orders/{id}")
+    public TakeOrderDto takeOrder(@PathVariable Long id, @RequestBody TakeOrderDto takeOrderDto) {
+
+        if (!"TAKEN".equals(takeOrderDto.status())) {
+            throw new RuntimeException("Invalid order-taking request");
+        }
+
+        if (orderRepository.atomicTakeOrder(id) == 1) {
+            return new TakeOrderDto("SUCCESS");
+        } else {
+            throw new RuntimeException("FAILURE");
+        }
 
     }
 
